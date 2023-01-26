@@ -11,9 +11,6 @@ import {AuthResponse} from "../types/AuthResponse";
 import {Match} from "../types/Match";
 import {AuthProvider} from "../types/AuthProvider";
 
-const pb = new PocketBase('http://127.0.0.1:8090');
-pb.autoCancellation(false);
-
 function authProviderFromAuthProviderInfo(authProviderInfo: AuthProviderInfo): AuthProvider {
     return {
         name: authProviderInfo.name,
@@ -162,222 +159,226 @@ function userFromRecord(record: Record): User {
     };
 }
 
-const redirectUrl = 'http://127.0.0.1:3000/redirect';
 let discordProvider: AuthProvider | undefined = undefined;
 
-export const pocketBaseBackend: Backend = {
-    /* Authentication */
-    getDiscordProvider: async (): Promise<AuthProvider> => {
-        if (discordProvider === undefined) {
-            const providerString = localStorage.getItem("provider");
-            const providerJSON = JSON.parse(providerString ? providerString : "{}");
-            if (providerJSON.hasOwnProperty("name") &&
-                providerJSON.hasOwnProperty("authURL") &&
-                providerJSON.hasOwnProperty("state") &&
-                providerJSON.hasOwnProperty("codeVerifier")) {
-                discordProvider = providerJSON as AuthProvider;
+export function PocketBaseBackend(baseUrl: string, redirectUrl: string): Backend {
+    const pb = new PocketBase(baseUrl);
+    pb.autoCancellation(false);
+
+    return {
+        /* Authentication */
+        getDiscordProvider: async (): Promise<AuthProvider> => {
+            if (discordProvider === undefined) {
+                const providerString = localStorage.getItem("provider");
+                const providerJSON = JSON.parse(providerString ? providerString : "{}");
+                if (providerJSON.hasOwnProperty("name") &&
+                    providerJSON.hasOwnProperty("authURL") &&
+                    providerJSON.hasOwnProperty("state") &&
+                    providerJSON.hasOwnProperty("codeVerifier")) {
+                    discordProvider = providerJSON as AuthProvider;
+                    return discordProvider;
+                }
+
+                const authMethods = await pb.collection('users').listAuthMethods();
+                for (let provider of authMethods.authProviders) {
+                    if (provider.name === 'discord') {
+                        discordProvider = {
+                            name: provider.name,
+                            authURL: provider.authUrl + redirectUrl,
+                            state: provider.state,
+                            codeVerifier: provider.codeVerifier
+                        };
+                        localStorage.setItem('provider', JSON.stringify(discordProvider));
+                        return discordProvider;
+                    }
+                }
+            } else {
                 return discordProvider;
             }
 
-            const authMethods = await pb.collection('users').listAuthMethods();
-            for (let provider of authMethods.authProviders) {
-                if (provider.name === 'discord') {
-                    discordProvider = {
-                        name: provider.name,
-                        authURL: provider.authUrl + redirectUrl,
-                        state: provider.state,
-                        codeVerifier: provider.codeVerifier
-                    };
-                    localStorage.setItem('provider', JSON.stringify(discordProvider));
-                    return discordProvider;
-                }
+            return Promise.reject(Error("Unable to load discord provider."));
+        },
+        finishDiscordSignIn: async (state: string, code: string): Promise<AuthResponse> => {
+            const providerString = localStorage.getItem('provider');
+            const provider = JSON.parse(providerString === null ? "{}" : providerString);
+
+            if (provider.state !== state) {
+                return Promise.reject(Error('state mismatch'));
             }
-        } else {
-            return discordProvider;
-        }
 
-        return Promise.reject(Error("Unable to load discord provider."));
-    },
-    finishDiscordSignIn: async (state: string, code: string): Promise<AuthResponse> => {
-        const providerString = localStorage.getItem('provider');
-        const provider = JSON.parse(providerString === null ? "{}" : providerString);
+            return pb.collection('users').authWithOAuth2(
+                provider.name,
+                code,
+                provider.codeVerifier,
+                redirectUrl
+            ).then((response: RecordAuthResponse) => {
+                return {
+                    user: userFromRecord(response.record),
+                    token: response.token,
+                    meta: response.meta
+                };
+            });
+        },
+        signOut: (): void => {
+            pb.authStore.clear();
+        },
+        signedIn: (): boolean => {
+            return pb.authStore.isValid;
+        },
+        onAuthChange: (callback: () => void): () => void => {
+            return pb.authStore.onChange(callback);
+        },
 
-        if (provider.state !== state) {
-            return Promise.reject(Error('state mismatch'));
-        }
+        /* Teas */
+        listTeas: async (tags: boolean = false, globalRank: boolean = false, localRank: boolean = false, notes: boolean = false): Promise<Tea[]> => {
+            const expand = Array<string>();
+            if (tags) {
+                expand.push('tea_to_tag(tea).tag');
+            }
+            if (globalRank) {
+                expand.push('global_rank');
+            }
+            if (localRank) {
+                expand.push('local_ranks(tea)');
+            }
+            if (notes) {
+                expand.push('notes(tea)')
+            }
 
-        return pb.collection('users').authWithOAuth2(
-            provider.name,
-            code,
-            provider.codeVerifier,
-            redirectUrl
-        ).then((response: RecordAuthResponse) => {
-            return {
-                user: userFromRecord(response.record),
-                token: response.token,
-                meta: response.meta
+            const queryParams = {
+                sort: '-created,id',
+                expand: expand.length === 0 ? undefined : expand.join(','),
             };
-        });
-    },
-    signOut: (): void => {
-        pb.authStore.clear();
-    },
-    signedIn: (): boolean => {
-        return pb.authStore.isValid;
-    },
-    onAuthChange: (callback: () => void): () => void => {
-        return pb.authStore.onChange(callback);
-    },
 
-    /* Teas */
-    listTeas: async (tags: boolean = false, globalRank: boolean = false, localRank: boolean = false, notes: boolean = false): Promise<Tea[]> => {
-        const expand = Array<string>();
-        if (tags) {
-            expand.push('tea_to_tag(tea).tag');
-        }
-        if (globalRank) {
-            expand.push('global_rank');
-        }
-        if (localRank) {
-            expand.push('local_ranks(tea)');
-        }
-        if (notes) {
-            expand.push('notes(tea)')
-        }
-
-        const queryParams = {
-            sort: '-created,id',
-            expand: expand.length === 0 ? undefined : expand.join(','),
-        };
-
-        return pb.collection('teas').getFullList(200, queryParams).then((teaRecords: Record[]) => {
-            return teaRecords.map((teaRecord: Record) => {
-                return teaFromRecord(teaRecord);
+            return pb.collection('teas').getFullList(200, queryParams).then((teaRecords: Record[]) => {
+                return teaRecords.map((teaRecord: Record) => {
+                    return teaFromRecord(teaRecord);
+                });
             });
-        });
-    },
-    viewTea: async (id: string, tags: boolean = false, globalRank: boolean = false, localRank: boolean = false, notes: boolean = false): Promise<Tea> => {
-        const expand = Array<string>();
-        if (tags) {
-            expand.push('tea_to_tag(tea).tag');
-        }
-        if (globalRank) {
-            expand.push('global_rank');
-        }
-        if (localRank) {
-            expand.push('local_ranks(tea)');
-        }
-        if (notes) {
-            expand.push('notes(tea)')
-        }
+        },
+        viewTea: async (id: string, tags: boolean = false, globalRank: boolean = false, localRank: boolean = false, notes: boolean = false): Promise<Tea> => {
+            const expand = Array<string>();
+            if (tags) {
+                expand.push('tea_to_tag(tea).tag');
+            }
+            if (globalRank) {
+                expand.push('global_rank');
+            }
+            if (localRank) {
+                expand.push('local_ranks(tea)');
+            }
+            if (notes) {
+                expand.push('notes(tea)')
+            }
 
-        const queryParams = {
-            expand: expand.length === 0 ? undefined : expand.join(','),
-        };
+            const queryParams = {
+                expand: expand.length === 0 ? undefined : expand.join(','),
+            };
 
-        return pb.collection('teas').getOne(id, queryParams).then((record: Record) => {
-            return teaFromRecord(record);
-        });
-    },
-    founderFavoriteTeas: async (): Promise<Tea[]> => {
-        return pb.send('/api/founder_favorites', {});
-    },
-
-    /* Notes */
-    createNote: async (notes: string, teaId: string): Promise<Note> => {
-        const data = {
-            user: pb.authStore.model?.id,
-            notes: notes,
-            tea: teaId
-        };
-
-        return pb.collection('notes').create(data).then((record: Record) => {
-            return noteFromRecord(record);
-        });
-    },
-    updateNote: async (note: Note): Promise<Note> => {
-        const data = {
-            user: pb.authStore.model?.id,
-            notes: note.notes
-        };
-
-        return pb.collection('notes').update(note.id, data).then((record: Record) => {
-            return noteFromRecord(record);
-        });
-    },
-
-    /* Matches */
-    createMatch: async (loserId: string, winnerId: string): Promise<Match> => {
-        const data = {
-            user: pb.authStore.model?.id,
-            loser: loserId,
-            winner: winnerId
-        };
-
-        return pb.collection('matches').create(data).then((record: Record) => {
-            return matchFromRecord(record);
-        });
-    },
-    listMatches: async (winner?: boolean, loser?: boolean, user?: boolean) => {
-        const expand = Array<string>();
-        if (winner) {
-            expand.push('winner');
-        }
-        if (loser) {
-            expand.push('loser');
-        }
-        if (user) {
-            expand.push('user');
-        }
-
-        const queryParams = {
-            sort: '-created,id',
-            expand: expand.length === 0 ? undefined : expand.join(',')
-        };
-
-        return pb.collection('matches').getFullList(200, queryParams).then((matches: Record[]) => {
-            return matches.map((matchRecord: Record) => {
-                return matchFromRecord(matchRecord);
+            return pb.collection('teas').getOne(id, queryParams).then((record: Record) => {
+                return teaFromRecord(record);
             });
-        });
-    },
+        },
+        founderFavoriteTeas: async (): Promise<Tea[]> => {
+            return pb.send('/api/founder_favorites', {});
+        },
 
-    /* Rankings */
-    listGlobalRanks: async (tea?: boolean): Promise<GlobalRank[]> => {
-        const expand = Array<string>();
-        if (tea) {
-            expand.push('teas(global_rank)');
-        }
+        /* Notes */
+        createNote: async (notes: string, teaId: string): Promise<Note> => {
+            const data = {
+                user: pb.authStore.model?.id,
+                notes: notes,
+                tea: teaId
+            };
 
-        const queryParams = {
-            sort: '-rank,id',
-            expand: expand.length === 0 ? undefined : expand.join(','),
-        };
-
-        return pb.collection('global_ranks').getFullList(200, queryParams).then((ranks: Record[]) => {
-            return ranks.map((rankRecord: Record) => {
-                return globalRankFromRecord(rankRecord);
+            return pb.collection('notes').create(data).then((record: Record) => {
+                return noteFromRecord(record);
             });
-        });
-    },
-    listLocalRanks: (tea?: boolean, user?: boolean): Promise<LocalRank[]> => {
-        const expand = Array<string>();
-        if (tea) {
-            expand.push('tea');
-        }
-        if (user) {
-            expand.push('user');
-        }
+        },
+        updateNote: async (note: Note): Promise<Note> => {
+            const data = {
+                user: pb.authStore.model?.id,
+                notes: note.notes
+            };
 
-        const queryParams = {
-            sort: '-rank,id',
-            expand: expand.length === 0 ? undefined : expand.join(','),
-        };
-
-        return pb.collection('local_ranks').getFullList(200, queryParams).then((ranks: Record[]) => {
-            return ranks.map((rankRecord: Record) => {
-                return localRankFromRecord(rankRecord);
+            return pb.collection('notes').update(note.id, data).then((record: Record) => {
+                return noteFromRecord(record);
             });
-        });
-    }
+        },
+
+        /* Matches */
+        createMatch: async (loserId: string, winnerId: string): Promise<Match> => {
+            const data = {
+                user: pb.authStore.model?.id,
+                loser: loserId,
+                winner: winnerId
+            };
+
+            return pb.collection('matches').create(data).then((record: Record) => {
+                return matchFromRecord(record);
+            });
+        },
+        listMatches: async (winner?: boolean, loser?: boolean, user?: boolean) => {
+            const expand = Array<string>();
+            if (winner) {
+                expand.push('winner');
+            }
+            if (loser) {
+                expand.push('loser');
+            }
+            if (user) {
+                expand.push('user');
+            }
+
+            const queryParams = {
+                sort: '-created,id',
+                expand: expand.length === 0 ? undefined : expand.join(',')
+            };
+
+            return pb.collection('matches').getFullList(200, queryParams).then((matches: Record[]) => {
+                return matches.map((matchRecord: Record) => {
+                    return matchFromRecord(matchRecord);
+                });
+            });
+        },
+
+        /* Rankings */
+        listGlobalRanks: async (tea?: boolean): Promise<GlobalRank[]> => {
+            const expand = Array<string>();
+            if (tea) {
+                expand.push('teas(global_rank)');
+            }
+
+            const queryParams = {
+                sort: '-rank,id',
+                expand: expand.length === 0 ? undefined : expand.join(','),
+            };
+
+            return pb.collection('global_ranks').getFullList(200, queryParams).then((ranks: Record[]) => {
+                return ranks.map((rankRecord: Record) => {
+                    return globalRankFromRecord(rankRecord);
+                });
+            });
+        },
+        listLocalRanks: (tea?: boolean, user?: boolean): Promise<LocalRank[]> => {
+            const expand = Array<string>();
+            if (tea) {
+                expand.push('tea');
+            }
+            if (user) {
+                expand.push('user');
+            }
+
+            const queryParams = {
+                sort: '-rank,id',
+                expand: expand.length === 0 ? undefined : expand.join(','),
+            };
+
+            return pb.collection('local_ranks').getFullList(200, queryParams).then((ranks: Record[]) => {
+                return ranks.map((rankRecord: Record) => {
+                    return localRankFromRecord(rankRecord);
+                });
+            });
+        }
+    };
 }
