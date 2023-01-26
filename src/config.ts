@@ -3,7 +3,8 @@ import {mockBackend} from "./services/backend/MockBackend";
 import {PocketBaseBackend} from "./services/backend/PocketBase";
 
 export let backend: Backend;
-switch (process.env.REACT_APP_STAGE) {
+const reactAppStage = process.env.REACT_APP_STAGE ? process.env.REACT_APP_STAGE : 'prod';
+switch (reactAppStage) {
     case 'dev':
         backend = mockBackend;
         break;
