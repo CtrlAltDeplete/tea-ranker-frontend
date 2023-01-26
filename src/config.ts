@@ -12,7 +12,7 @@ switch (reactAppStage) {
         backend = PocketBaseBackend('http://127.0.0.1:8090', 'http://127.0.0.1:3000/redirect');
         break;
     case 'prod':
-        backend = PocketBaseBackend('https://tearanker.com/api', 'https://tearanker.com/redirect');
+        backend = PocketBaseBackend('https://www.tearanker.com', 'https://www.tearanker.com/redirect');
         break;
     default:
         throw Error(`No configuration for ${process.env.REACT_APP_STAGE} environment`);
