@@ -1,0 +1,42 @@
+.rank-listing {
+    font-size: min(6vw, 25px);
+    line-height: 120%;
+    display: inline-block;
+    width: 100%;
+    direction: ltr;
+    margin: min(3vw, 20px) 0;
+}
+
+.rank-index, .rank-tea-name {
+    font-weight: 700;
+    float: left;
+}
+
+.rank-index {
+    margin: 0 min(2vw, 40px) 0 min(4vw, 80px);
+}
+
+.rank {
+    font-weight: 400;
+    float: right;
+}
+
+.rank-tea-name > a:link, .rank-tea-name > a:visited {
+    color: #282828;
+    text-decoration: none;
+}
+
+.rank-tea-name > a:hover {
+    text-decoration: underline;
+    text-decoration-color: #0094FF;
+    text-underline-offset: 0.1em;
+    text-decoration-thickness: 3px;
+}
+
+@media (max-width: 500px) {
+    .rank {
+        clear: both;
+        float: left;
+        padding-left: 45px;
+    }
+}

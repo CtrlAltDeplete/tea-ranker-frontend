@@ -1,0 +1,60 @@
+.about-us {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    padding-top: min(13.9vw, 200px);
+    width: min(1235px, 100%);
+    margin: auto;
+}
+
+.founder-card {
+    width: 30%;
+    padding: 5vw 0;
+}
+
+@media (min-width: 700px) and (max-width: 1235px) {
+    .founder-card {
+        width: 620px;
+    }
+
+    .about-us {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 700px) {
+    .founder-card {
+        width: 100%;
+    }
+}
+
+.founder-img {
+    height: min(280px, 75.6%);
+    display: block;
+    margin: auto;
+}
+
+.founder-name {
+    font-weight: 700;
+    font-size: min(35px, 7vw);
+    line-height: 123%;
+}
+
+.founder-bio {
+    font-weight: 300;
+    font-size: min(35px, 7vw);
+    line-height: 123%;
+}
+
+.founder-card a:link, .founder-card a:visited {
+    color: #282828;
+    text-decoration: none;
+}
+
+.founder-card a:hover {
+    text-decoration: underline;
+    text-decoration-color: #0094FF;
+    text-underline-offset: 0.1em;
+}

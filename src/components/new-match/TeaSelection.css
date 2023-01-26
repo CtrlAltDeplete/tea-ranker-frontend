@@ -1,0 +1,63 @@
+.tea-selection {
+    position: relative;
+
+    font-weight: 700;
+    font-size: min(5vw, 25px);
+    line-height: 120%;
+
+    width: min(100%);
+}
+
+.mock-select {
+    padding: min(2.7vw, 15px) 0 min(2.5vw, 13px) min(4vw, 24px);
+
+    border-color: #282828;
+    border-style: solid;
+    border-width: 2px;
+
+    background-image: url("dropdown.svg");
+    background-position: center right min(4vw, 30px);
+    background-repeat: no-repeat;
+
+    cursor: pointer;
+}
+
+.mock-option-list {
+    position: absolute;
+    width: 100%;
+
+    background-color: #282828;
+    color: #F4F5F8;
+
+    z-index: 999;
+}
+
+.mock-option-list.hidden {
+    display: none;
+}
+
+.mock-option-list.visible {
+    display: block;
+}
+
+.mock-option-list li {
+    padding: min(4.5vw, 27px) 0 min(3vw, 18px) min(4vw, 24px);
+    cursor: pointer;
+}
+
+.mock-option-list li.selected, .mock-option-list li:hover {
+    text-decoration: underline;
+    text-decoration-color: #0094FF;
+    text-underline-offset: 0.1em;
+}
+
+.mock-option-list li.close-dropdown {
+    position: absolute;
+    right: min(4.4vw, 32px);
+    top: min(3.5vw, 18px);
+    padding: 0;
+}
+
+li.close-dropdown > img {
+    width: min(7vw, 26px);
+}

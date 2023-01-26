@@ -1,0 +1,62 @@
+.tea-spotlight {
+    display: flex;
+    justify-content: space-between;
+
+    padding-top: min(100px, 2vh); /* 177 - 77 */
+    width: min(1235px, 100%);
+}
+
+.tea-details {
+    width: 100%;
+}
+
+.tea-spotlight > .tea-details {
+    float: right;
+}
+
+.tea-details > .tea-name {
+    font-weight: 700;
+    font-size: min(65px, 5vh);
+    line-height: 110%;
+    padding-top: min(77px, 5vh);
+}
+
+.tea-details > .tea-tags {
+    font-weight: 700;
+    font-size: min(35px, 3vh);
+    line-height: 110%;
+    padding-top: min(30px, 2vh);
+}
+
+.tea-details > .tea-description {
+    font-weight: 400;
+    font-size: min(25px, 2.5vh);
+    line-height: 170%;
+    padding-top: min(21px, 2vh);
+}
+
+.tea-details .tea-rank, .tea-details .match-history {
+    font-weight: 700;
+    font-size: min(25px, 2.5vh);
+    line-height: 120%;
+    padding-top: min(21px, 1.5vh);
+}
+
+.tea-spotlight > .tea-img {
+    float: right;
+    z-index: -1;
+}
+
+.tea-spotlight > .tea-img > img {
+    width: 545px;
+}
+
+@media (max-width: 1235px) {
+    .tea-spotlight > .tea-img {
+        position: fixed;
+    }
+
+    .tea-spotlight > .tea-img > img {
+        opacity: 0.15;
+    }
+}

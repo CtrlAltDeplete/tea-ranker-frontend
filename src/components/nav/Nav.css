@@ -1,0 +1,128 @@
+/* Button Styles */
+.nav button {
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+#open-menu-button {
+    height: min(5.5vw, 34px);
+    cursor: pointer;
+}
+
+#close-menu-button {
+    width: min(6.1vw, 38px);
+    padding-top: min(8.8vw, 55px);
+
+    background: #282828;
+    color: #FFFFFF;
+
+    cursor: pointer;
+}
+
+#tea-icon {
+    position: absolute;
+    right: min(5.3vw, 33px);
+    bottom: min(3.9vw, 24px);
+    width: min(13.5vw, 84px);
+}
+
+/* Side Menu */
+.side-menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: min(100%, 622px); /* 690px - 68px */
+    min-height: 100%;
+
+    background: #282828;
+    color: #F4F5F8;
+
+    transition: 0.5s;
+
+    z-index: 1000;
+    visibility: hidden;
+}
+
+.side-menu ul {
+    margin: 0;
+    padding: 0 0 0 min(10.9%, 68px);
+
+    list-style-type: none;
+}
+
+.side-menu li {
+    font-weight: 700;
+    font-size: min(10vw, 65px);
+    line-height: 110%;
+    margin-bottom: min(5.8%, 36px);
+}
+
+.side-menu a:link, .side-menu a:visited {
+    color: #F4F5F8;
+    text-decoration: none;
+}
+
+.side-menu a:hover {
+    text-decoration: underline;
+    text-decoration-color: #0094FF;
+    text-underline-offset: 0.1em;
+}
+
+/* Animations */
+.side-menu.show {
+    visibility: visible;
+    -webkit-animation: fade-in-from-left 0.5s;
+    animation: fade-in-from-left 0.5s;
+}
+
+.side-menu.hide {
+    visibility: hidden;
+    -webkit-animation: fade-out-to-left 0.5s;
+    animation: fade-out-to-left 0.5s;
+}
+
+@-webkit-keyframes fade-in-from-left {
+    from {
+        left: -622px;
+        opacity: 0;
+    }
+    to {
+        left: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in-from-left {
+    from {
+        left: -622px;
+        opacity: 0;
+    }
+    to {
+        left: 0;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fade-out-to-left {
+    from {
+        left: 0;
+        opacity: 1;
+    }
+    to {
+        left: -622px;
+        opacity: 0;
+    }
+}
+
+@keyframes fade-out-to-left {
+    from {
+        left: 0;
+        opacity: 1;
+    }
+    to {
+        left: -622px;
+        opacity: 0;
+    }
+}

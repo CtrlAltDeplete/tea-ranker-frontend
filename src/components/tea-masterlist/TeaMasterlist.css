@@ -1,0 +1,23 @@
+#tea-masterlist > ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-gap: 1rem;
+}
+
+#tea-masterlist > input {
+    margin: min(13.9vw, 200px) 0 min(7.9vw, 100px) 0;
+
+    padding: min(3vw, 10px) 0 min(2.8vw, 8px) min(6vw, 20px);
+
+    border-color: #282828;
+    border-style: solid;
+    border-width: 2px;
+
+    position: relative;
+
+    font-weight: 700;
+    font-size: min(4.5vw, 20px);
+    line-height: 25px;
+
+    width: min(100%, 386px);
+}

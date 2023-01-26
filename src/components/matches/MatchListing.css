@@ -1,0 +1,31 @@
+.match-listing {
+    font-size: min(6vw, 25px);
+    line-height: 120%;
+    display: inline-block;
+    width: 100%;
+    direction: ltr;
+    margin: min(3vw, 20px) 0;
+}
+
+.match-tea-name {
+    font-weight: 700;
+    float: left;
+}
+
+.match-date {
+    font-weight: 400;
+    float: left;
+    margin: 0 min(2vw, 35px) 0 min(1vw, 15px);
+}
+
+.match-tea-name > a:link, .match-tea-name > a:visited {
+    color: #282828;
+    text-decoration: none;
+}
+
+.match-tea-name > a:hover {
+    text-decoration: underline;
+    text-decoration-color: #0094FF;
+    text-underline-offset: 0.1em;
+    text-decoration-thickness: 3px;
+}

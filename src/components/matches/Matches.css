@@ -1,0 +1,42 @@
+#matches {
+    width: min(100%, 540px);
+    margin: min(10vw, 145px) auto 0 auto;
+}
+
+#matches header {
+    position: relative;
+    width: 100%;
+}
+
+#matches h1 {
+    font-weight: 700;
+    font-size: min(7vw, 45px);
+    line-height: 110%;
+}
+
+#matches .list-container {
+    height: 500px;
+    overflow: auto;
+    direction: rtl;
+    margin-top: min(10vw, 60px);
+}
+
+@media (max-width: 500px) {
+    #matches .list-container {
+        margin-left: -20px;
+    }
+}
+
+#matches .list-container::-webkit-scrollbar {
+    width: min(3vw, 10px);
+}
+
+#matches .list-container::-webkit-scrollbar-track {
+    background: #C5C5C5;
+    border-radius: 10px;
+}
+
+#matches .list-container::-webkit-scrollbar-thumb {
+    background: #0094FF;
+    border-radius: 10px;
+}

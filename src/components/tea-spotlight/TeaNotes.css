@@ -1,0 +1,29 @@
+.tea-notes {
+    width: 100%;
+    height: min(50vh, 327px);
+
+    margin-top: min(5vw, 41px);
+    border: 2px solid #282828;
+
+    background: #FFFFFF;
+}
+
+.tea-notes > textarea {
+    padding: min(3vw, 21px) min(3.5vw, 28px) min(3vw, 21px) min(3.5vw, 28px);
+
+    font-weight: 700;
+    font-size: min(5vw, 25px);
+    line-height: 120%;
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+    background-color: transparent;
+    resize: none;
+    outline: none;
+}
+
+textarea.tea-notes::placeholder {
+    color: #C5C5C5;
+}

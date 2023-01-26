@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Custom CSS */
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    color: #282828;
+
+    padding: min(8.8vw, 55px) min(10.9%, 68px) 0 min(10.9%, 68px);
+}

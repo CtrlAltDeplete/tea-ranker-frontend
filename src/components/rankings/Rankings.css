@@ -1,0 +1,123 @@
+#rankings {
+    width: min(100%, 540px);
+    margin: min(10vw, 145px) auto 0 auto;
+}
+
+#rankings header {
+    position: relative;
+    width: 100%;
+}
+
+#rankings h1 {
+    font-weight: 700;
+    font-size: min(7vw, 45px);
+    line-height: 110%;
+}
+
+#rankings .rank-type {
+    color: #0094FF;
+    padding-right: min(1vw, 8px);
+}
+
+#rankings .list-container {
+    height: 500px;
+    overflow: auto;
+    direction: rtl;
+    margin-top: min(10vw, 60px);
+}
+
+@media (max-width: 500px) {
+    #rankings .list-container {
+        margin-left: -20px;
+    }
+}
+
+#rankings .list-container::-webkit-scrollbar {
+    width: min(3vw, 10px);
+}
+
+#rankings .list-container::-webkit-scrollbar-track {
+    background: #C5C5C5;
+    border-radius: 10px;
+}
+
+#rankings .list-container::-webkit-scrollbar-thumb {
+    background: #0094FF;
+    border-radius: 10px;
+}
+
+#rankings header label {
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    right: 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: min(20vw, 60px);
+    height: min(8vw, 34px);
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #C5C5C5;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: min(7vw, 30px);
+    width: min(7vw, 30px);
+    left: 2px;
+    bottom: 2px;
+    background-color: #8F8F8F;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider:before {
+    background-color: #0094FF;
+}
+
+input:focus + .slider:before {
+    box-shadow: 0 0 1px #0094FF;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+@media (max-width: 500px) {
+    input:checked + .slider:before {
+        -webkit-transform: translateX(28px);
+        -ms-transform: translateX(28px);
+        transform: translateX(28px);
+    }
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: min(8vw, 34px);
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}

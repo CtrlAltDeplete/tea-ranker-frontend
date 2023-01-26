@@ -1,0 +1,26 @@
+.home > .tagline {
+    font-weight: 700;
+    font-size: min(9.5vw, 85px);
+    line-height: 110%;
+
+    width: min(100%, 1235px);
+    margin-top: min(25vw, 177px);
+    margin-bottom: min(5vw, 48px);
+}
+
+.home > .tagline > a:link, .home > .tagline > a:visited {
+    color: #282828;
+    text-decoration: none;
+}
+
+.home > .tagline > a:hover {
+    text-decoration: underline;
+    text-decoration-color: #0094FF;
+    text-underline-offset: 0.1em;
+}
+
+.home > .addendum {
+    font-weight: 500;
+    font-size: min(5vw, 25px);
+    line-height: 120%;
+}

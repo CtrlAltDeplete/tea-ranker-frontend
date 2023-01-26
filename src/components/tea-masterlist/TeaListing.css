@@ -1,0 +1,41 @@
+.tea-listing {
+    padding: min(2vw, 16px);
+}
+
+.tea-listing > .tea-img {
+    width: min(max(60vw, 200px), 300px);
+    height: min(max(60vw, 200px), 300px);
+    margin: auto;
+}
+
+.tea-listing > .tea-img > img {
+    height: 100%;
+    width: 100%;
+}
+
+.tea-listing > .tea-name {
+    font-weight: 700;
+    font-size: min(6vw, 35px);
+    line-height: 110%;
+    color: #282828;
+
+    padding-bottom: 5px;
+}
+
+.tea-listing > .tea-tags {
+    font-weight: 500;
+    font-size: min(5vw, 35px);
+    line-height: 85%;
+    color: #282828;
+}
+
+.tea-name > a:link, .tea-name > a:visited {
+    color: #282828;
+    text-decoration: none;
+}
+
+.tea-name > a:hover {
+    text-decoration: underline;
+    text-decoration-color: #0094FF;
+    text-underline-offset: 0.02em;
+}

@@ -1,0 +1,53 @@
+#new-match {
+    margin: min(10vh, 215px) auto 0;
+    width: min(1115px, 100%);
+}
+
+#new-match > h1 {
+    font-weight: 700;
+    font-size: min(9vw, 45px);
+    line-height: 110%;
+    margin-bottom: min(5vw, 30px);
+}
+
+.tea-selection-section {
+    display: flex;
+}
+
+@media (max-width: 1000px) {
+    .tea-selection-section {
+        display: block;
+    }
+}
+
+.tea-selection-section > #vs {
+    font-weight: 900;
+    font-size: min(5vw, 25px);
+    line-height: 120%;
+    padding: 12px 25px;
+}
+
+@media (max-width: 1000px) {
+    .tea-selection-section > #vs {
+        text-align: center;
+    }
+}
+
+#new-match > .submit-link {
+    cursor: pointer;
+    margin-top: min(7vw, 78px);
+
+    text-decoration: underline;
+    text-decoration-color: #0094FF;
+    text-underline-offset: 0.1em;
+    text-decoration-thickness: 8px;
+
+    font-weight: 700;
+    font-size: min(6.5vw, 35px);
+    line-height: 110%;
+}
+
+#new-match > .submit-link.disabled {
+    cursor: not-allowed;
+    text-decoration-color: #8F8F8F;
+}
