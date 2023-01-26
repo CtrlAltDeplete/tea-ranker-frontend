@@ -14,6 +14,10 @@ export const Toast: FunctionComponent<ToastProp> = (props: ToastProp): JSX.Eleme
         className += " show";
     }
 
+    if (props.err !== undefined) {
+        console.error(props.err);
+    }
+
     return (
         <div className={className}>
             {props.err === undefined ? props.msg : `Error: ${props.err.message}`}

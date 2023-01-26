@@ -170,7 +170,7 @@ export const pocketBaseBackend: Backend = {
     getDiscordProvider: async (): Promise<AuthProvider> => {
         if (discordProvider === undefined) {
             const providerString = localStorage.getItem("provider");
-            const providerJSON = JSON.parse(providerString ? providerString : "");
+            const providerJSON = JSON.parse(providerString ? providerString : "{}");
             if (providerJSON.hasOwnProperty("name") &&
                 providerJSON.hasOwnProperty("authURL") &&
                 providerJSON.hasOwnProperty("state") &&
@@ -200,7 +200,7 @@ export const pocketBaseBackend: Backend = {
     },
     finishDiscordSignIn: async (state: string, code: string): Promise<AuthResponse> => {
         const providerString = localStorage.getItem('provider');
-        const provider = JSON.parse(providerString === null ? "" : providerString);
+        const provider = JSON.parse(providerString === null ? "{}" : providerString);
 
         if (provider.state !== state) {
             return Promise.reject(Error('state mismatch'));
