@@ -246,7 +246,7 @@ export function PocketBaseBackend(baseUrl: string, redirectUrl: string): Backend
             }
 
             const queryParams = {
-                sort: '-created,id',
+                sort: '-name,id',
                 expand: expand.length === 0 ? undefined : expand.join(','),
             };
 
