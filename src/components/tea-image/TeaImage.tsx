@@ -4,17 +4,23 @@ import teaImg0 from './tea-0.png';
 import teaImg1 from './tea-1.png';
 import teaImg2 from './tea-2.png';
 
-export const TeaImage: FunctionComponent = (): JSX.Element => {
-    let teaImg: string;
+export type TeaImageProps = {
+    teaImage: string
+    scaleX: number
+    scaleY: number
+}
+
+export function RandomTeaImageProps(): TeaImageProps {
+    let teaImage: string;
     switch (Math.floor(Math.random() * 3.0)) {
         case 0:
-            teaImg = teaImg0;
+            teaImage = teaImg0;
             break;
         case 1:
-            teaImg = teaImg1;
+            teaImage = teaImg1;
             break;
         default:
-            teaImg = teaImg2;
+            teaImage = teaImg2;
             break;
     }
 
@@ -27,5 +33,13 @@ export const TeaImage: FunctionComponent = (): JSX.Element => {
         scaleY = -1;
     }
 
-    return <img src={teaImg} alt={"Tea"} style={{transform: `scaleX(${scaleX}) scaleY(${scaleY})`}}/>;
+    return {
+        teaImage: teaImage,
+        scaleX: scaleX,
+        scaleY: scaleY
+    };
+}
+
+export const TeaImage: FunctionComponent<TeaImageProps> = (props: TeaImageProps): JSX.Element => {
+    return <img src={props.teaImage} alt={"Tea"} style={{transform: `scaleX(${props.scaleX}) scaleY(${props.scaleY})`}}/>;
 }
