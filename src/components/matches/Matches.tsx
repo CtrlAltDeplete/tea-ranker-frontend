@@ -1,46 +1,44 @@
-import React, {Component} from "react";
+import React, {FunctionComponent, useState, useEffect} from "react";
 
 import {backend} from "../../config";
-import {ToastableProps} from "../toast/ToastableProps";
 import {Match} from "../../services/types/Match";
 import {MatchListing} from "./MatchListing";
+import {ToastableProps} from "../toast/ToastableProps";
 
 import "./Matches.css";
 
-type MatchesState = {
-    signedIn: boolean
-    isLoaded: boolean
-    matches: Match[]
-}
+export const Matches: FunctionComponent<ToastableProps> = (props: ToastableProps): JSX.Element => {
+    const [isLoaded, setLoaded] = useState(false);
+    const [isSignedIn, setSignedIn] = useState(backend.signedIn());
+    const [matches, setMatches] = useState<Match[]>([]);
 
-export default class Matches extends Component<ToastableProps, MatchesState> {
-    state: Readonly<MatchesState> = {
-        signedIn: backend.signedIn(),
-        isLoaded: false,
-        matches: []
-    };
-
-    authListener: undefined | (() => void) = undefined;
-
-    componentDidMount() {
+    useEffect(() => {
         backend.listMatches(true, true, false).then((matches: Match[]) => {
-            this.setState({
-                matches: matches,
-                isLoaded: true,
-                signedIn: backend.signedIn()
-            });
+            setMatches(matches);
         }).catch((err) => {
-            this.props.toastError(err);
+            props.toastError(err);
+        }).finally(() => {
+            setLoaded(true);
         });
 
-        this.authListener = backend.onAuthChange(() => {
-            this.setState({
-                signedIn: backend.signedIn()
-            });
+        return backend.onAuthChange(() => {
+            setSignedIn(backend.signedIn());
         });
+    }, [props]);
+
+    if (!isSignedIn) {
+        return (
+            <section id={"matches"}>
+                <header>
+                    <h1>
+                        Sign In to View Matches
+                    </h1>
+                </header>
+            </section>
+        );
     }
 
-    render() {
+    if (!isLoaded) {
         return (
             <section id={"matches"}>
                 <header>
@@ -50,12 +48,27 @@ export default class Matches extends Component<ToastableProps, MatchesState> {
                 </header>
                 <div className={"list-container"}>
                     <ul>
-                        {this.state.matches.map((match: Match) => {
-                            return <MatchListing match={match}/>;
-                        })}
+                        Loading...
                     </ul>
                 </div>
             </section>
         );
     }
+
+    return (
+        <section id={"matches"}>
+            <header>
+                <h1>
+                    Matches
+                </h1>
+            </header>
+            <div className={"list-container"}>
+                <ul>
+                    {matches.map((match: Match) => {
+                        return <MatchListing key={match.id} match={match}/>;
+                    })}
+                </ul>
+            </div>
+        </section>
+    );
 }

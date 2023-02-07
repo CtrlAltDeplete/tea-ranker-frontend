@@ -1,4 +1,5 @@
 import React, {FunctionComponent} from "react";
+
 import {Match} from "../../services/types/Match";
 
 import "./MatchListing.css";

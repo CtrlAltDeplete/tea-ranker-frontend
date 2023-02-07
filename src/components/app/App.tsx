@@ -11,7 +11,7 @@ import {Auth} from "../auth/Auth";
 
 import './App.css';
 import Rankings from "../rankings/Rankings";
-import Matches from "../matches/Matches";
+import {Matches} from "../matches/Matches";
 
 type AppState = {
     error?: Error
