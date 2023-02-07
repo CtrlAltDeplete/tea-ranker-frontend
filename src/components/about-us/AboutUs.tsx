@@ -31,7 +31,7 @@ export const AboutUs: FunctionComponent<ToastableProps> = (props: ToastableProps
             setLoaded(true);
             props.toastError(err);
         });
-    });
+    }, [props]);
 
     if (isLoaded) {
         return (
