@@ -13,40 +13,52 @@ export const TeaMasterlist: FunctionComponent<ToastableProps> = (props: Toastabl
     const [teas, setTeas] = useState<Tea[]>([]);
     const [teaImageProps, setTeaImageProps] = useState<TeaImageProps[]>([]);
     const [filteredIds, setFilteredIds] = useState<number[]>([]);
+    const [searchQuery, setSearchQuery] = useState<undefined | string>(undefined);
+    const [hideTried, setHideTried] = useState(false);
 
     useEffect(() => {
-        backend.listTeas(true, false, false, false).then((teas) => {
-            const teaImageProps: TeaImageProps[] = [];
-            for (let i = 0; i < teas.length; i++) {
-                teaImageProps.push(RandomTeaImageProps());
-            }
+        if (!isLoaded) {
+            backend.listTeas(true, false, true, false).then((teas) => {
+                const teaImageProps: TeaImageProps[] = [];
+                for (let i = 0; i < teas.length; i++) {
+                    teaImageProps.push(RandomTeaImageProps());
+                }
 
-            setTeas(teas);
-            setTeaImageProps(teaImageProps);
-            setFilteredIds(Array.from(Array(teas.length).keys()));
-        }).catch((err) => {
-            props.toastError(err);
-        }).finally(() => {
-            setLoaded(true);
-        });
-    }, [props]);
-
-    function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
-        const newSearchQuery = event.target.value;
-        if (newSearchQuery === undefined || newSearchQuery === "") {
-            setFilteredIds(Array.from(Array(teas.length).keys()));
-            return
+                setTeas(teas);
+                setTeaImageProps(teaImageProps);
+            }).catch((err) => {
+                props.toastError(err);
+            }).finally(() => {
+                setLoaded(true);
+            });
         }
 
         setFilteredIds(Array.from(Array(teas.length).keys()).filter((index: number) => {
             const tea = teas[index];
-            return tea.name.includes(newSearchQuery) || tea.description.includes(newSearchQuery);
+            const okSearch = searchQuery === undefined ||
+                searchQuery === "" ||
+                tea.name.includes(searchQuery) ||
+                tea.description.includes(searchQuery);
+            const okTried = !hideTried || tea.expand?.localRank === undefined;
+            return okSearch && okTried;
         }));
+    }, [props, searchQuery, hideTried, teas, isLoaded]);
+
+    function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
+        setSearchQuery(event.target.value);
+    }
+
+    function handleHideTriedChange() {
+        setHideTried(!hideTried);
     }
 
     return (
         <section id={"tea-masterlist"}>
             <input type={"text"} placeholder={"Search..."} onChange={handleSearchChange}/>
+            <div className={"hide-tried"}>
+                <label>Hide Tried:</label>
+                <input type={"checkbox"} onChange={handleHideTriedChange} checked={hideTried}/>
+            </div>
             {isLoaded &&
                 <ul>
                     {filteredIds.map((teaIndex: number) => {

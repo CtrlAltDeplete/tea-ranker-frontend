@@ -21,3 +21,13 @@
 
     width: min(100%, 386px);
 }
+
+.hide-tried {
+    font-weight: 700;
+    font-size: min(5vw, 30px);
+    line-height: 110%;
+    color: #282828;
+
+    text-align: right;
+    padding-bottom: min(4vh, 20px);
+}
