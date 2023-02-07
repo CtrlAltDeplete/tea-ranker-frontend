@@ -10,7 +10,7 @@ import {Toast} from "../toast/Toast";
 import {Auth} from "../auth/Auth";
 
 import './App.css';
-import Rankings from "../rankings/Rankings";
+import {Rankings} from "../rankings/Rankings";
 import {Matches} from "../matches/Matches";
 
 type AppState = {
