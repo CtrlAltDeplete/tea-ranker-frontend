@@ -9,7 +9,7 @@ import './TeaSpotlight.css';
 import teaImg0 from '../tea-image/tea-0.png';
 import teaImg1 from '../tea-image/tea-1.png';
 import teaImg2 from '../tea-image/tea-2.png';
-import TeaNotes from "./TeaNotes";
+import {TeaNotes} from "./TeaNotes";
 import {ToastableProps} from "../toast/ToastableProps";
 
 type TeaSpotlightProps = {
@@ -132,7 +132,7 @@ class TeaSpotlightClass extends Component<TeaSpotlightProps, TeaSpotlightState> 
                                     Personal Rank: {this.state.tea?.expand?.localRank === undefined ?
                                     'No Personal Rank' : this.state.tea.expand.localRank.rank}
                                 </div>
-                                <TeaNotes note={this.state.tea?.expand?.notes} teaId={this.state.tea?.id} toastableProps={this.props.toastableProps} />
+                                <TeaNotes note={this.state.tea?.expand?.notes} teaId={this.state.tea?.id ? this.state.tea.id : ""} toastableProps={this.props.toastableProps} />
                                 {/*<div className={"match-history"}>Match History:</div>*/}
                             </div>
                         }
