@@ -1,8 +1,8 @@
 import React, {FunctionComponent, useEffect} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
-import {ToastableProps} from "../toast/ToastableProps";
+
 import {backend} from "../../config";
-import {AuthResponse} from "../../services/types/AuthResponse";
+import {ToastableProps} from "../toast/ToastableProps";
 
 function useQuery() {
     const {search} = useLocation();
@@ -19,7 +19,7 @@ export const Auth: FunctionComponent<ToastableProps> = (props: ToastableProps): 
 
         if (state && code) {
             // Finish the login process
-            backend.finishDiscordSignIn(state, code).then((response: AuthResponse) => {
+            backend.finishDiscordSignIn(state, code).then(() => {
                 props.toastMessage("Signed in!");
             }).catch((err) => {
                 props.toastError(err);
@@ -27,7 +27,7 @@ export const Auth: FunctionComponent<ToastableProps> = (props: ToastableProps): 
                 navigate('/');
             });
         }
-    })
+    });
 
     return <div/>;
 }
