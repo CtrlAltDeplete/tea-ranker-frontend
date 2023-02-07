@@ -1,66 +1,47 @@
-import React, {Component} from "react";
-import {ToastableProps} from "../toast/ToastableProps";
+import React, {FunctionComponent, useState, useEffect} from "react";
+
 import {backend} from "../../config";
 import {AuthProvider} from "../../services/types/AuthProvider";
+import {ToastableProps} from "../toast/ToastableProps";
 
-type SignInButtonState = {
-    signedIn: boolean
-    discordProvider?: AuthProvider
-}
+export const SignInButton: FunctionComponent<ToastableProps> = (props: ToastableProps): JSX.Element => {
+    const [isSignedIn, setSignedIn] = useState(backend.signedIn());
+    const [discordProvider, setDiscordProvider] = useState<undefined | AuthProvider>(undefined);
 
-function signOut() {
-    setTimeout(backend.signOut, 500);
-}
-
-export default class SignInButton extends Component<ToastableProps, SignInButtonState> {
-    state: Readonly<SignInButtonState> = {
-        signedIn: backend.signedIn(),
-        discordProvider: undefined
-    }
-
-    authListener: undefined | (() => void) = undefined;
-
-    componentDidMount() {
-        this.authListener = backend.onAuthChange(() => {
-            this.setState({
-                signedIn: backend.signedIn()
-            });
-        });
-
+    useEffect(() => {
         backend.getDiscordProvider().then((provider: AuthProvider) => {
-            this.setState({
-                discordProvider: provider
-            });
+            setDiscordProvider(provider);
         }).catch((err) => {
-            this.props.toastError(err);
+            props.toastError(err);
         });
+
+        return backend.onAuthChange(() => {
+            setSignedIn(backend.signedIn());
+        });
+    }, [props]);
+
+    function signOut() {
+        setTimeout(backend.signOut, 500);
     }
 
-    componentWillUnmount() {
-        if (this.authListener !== undefined) {
-            this.authListener();
-        }
-    }
-
-    render() {
-        if (this.state.signedIn) {
-            return (
-                <li>
-                    <a href={"#"} onClick={() => signOut()}>Sign Out</a>
-                </li>
-            );
-        }
-
-        if (this.state.discordProvider === undefined) {
-            return (
-                <li></li>
-            );
-        }
-
+    if (isSignedIn) {
         return (
             <li>
-                <a href={this.state.discordProvider.authURL}>Sign In</a>
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                <a href={"#"} onClick={() => signOut()}>Sign Out</a>
             </li>
         );
     }
-};
+
+    if (discordProvider === undefined) {
+        return (
+            <li></li>
+        );
+    }
+
+    return (
+        <li>
+            <a href={discordProvider.authURL}>Sign In</a>
+        </li>
+    );
+}

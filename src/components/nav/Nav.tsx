@@ -2,6 +2,7 @@ import React, {Component} from "react";
 
 /* Local Imports */
 import {backend} from "../../config";
+import {SignInButton} from "./SignInButton";
 import {ToastableProps} from "../toast/ToastableProps";
 
 /* CSS */
@@ -11,7 +12,6 @@ import './Nav.css';
 import menuIcon from './menu_icon.svg';
 import xIcon from "./x_icon.svg";
 import teaIcon from "./tea_icon.svg";
-import SignInButton from "./SignInButton";
 
 type NavState = {
     menuVisible: boolean
