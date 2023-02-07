@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {Home} from "../home/Home";
 import TeaMasterlist from "../tea-masterlist/TeaMasterlist";
-import AboutUs from "../about-us/AboutUs";
+import {AboutUs} from "../about-us/AboutUs";
 import {TeaSpotlight} from "../tea-spotlight/TeaSpotlight";
 import {NewMatch} from "../new-match/NewMatch";
 import Nav from "../nav/Nav";
