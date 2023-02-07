@@ -1,4 +1,4 @@
-import {Component} from "react";
+import {FunctionComponent, useState, useEffect} from "react";
 import {Tea} from "../../services/types/Tea";
 
 import "./TeaSelection.css";
@@ -11,68 +11,43 @@ type TeaSelectionProps = {
     selectionChangeCallback: (tea?: Tea) => void
 }
 
-type TeaSelectionState = {
-    teas?: Tea[]
-    selected?: Tea
-    dropdownVisible: boolean
-    placeholder: string
-    selectionChangeCallback: (tea?: Tea) => void
-}
+export const TeaSelection: FunctionComponent<TeaSelectionProps> = (props: TeaSelectionProps): JSX.Element => {
+    const [selected, setSelected] = useState<undefined | Tea>(undefined);
+    const [isDropdownVisible, setDropdownVisible] = useState(false);
 
-export class TeaSelection extends Component<TeaSelectionProps, TeaSelectionState> {
-    state: Readonly<TeaSelectionState> = {
-        teas: this.props.teas,
-        selected: this.props.selected,
-        dropdownVisible: false,
-        placeholder: this.props.placeholder,
-        selectionChangeCallback: this.props.selectionChangeCallback
+    useEffect(() => {
+        setSelected(props.selected);
+    }, [props]);
+
+    function handleSelectionChanged(newSelection?: Tea) {
+        setSelected(newSelection);
+        setDropdownVisible(false);
+        props.selectionChangeCallback(newSelection);
     }
 
-    handleSelectionOpen = () => {
-        this.setState({
-            dropdownVisible: this.state.teas !== undefined && this.state.teas.length > 0,
-        });
+    const classNames: string[] = ["mock-option-list"];
+    if (!isDropdownVisible) {
+        classNames.push("hidden");
+    } else {
+        classNames.push("visible");
     }
-
-    handleSelectionClose = () => {
-        this.setState({
-            dropdownVisible: false,
-        });
-    }
-
-    handleSelectionChanged = (newSelection?: Tea) => {
-        this.setState({
-            selected: newSelection,
-            dropdownVisible: false
-        });
-        this.state.selectionChangeCallback(newSelection);
-    }
-
-    render() {
-        const classNames: string[] = ["mock-option-list"];
-        if (!this.state.dropdownVisible) {
-            classNames.push("hidden");
-        } else {
-            classNames.push("visible");
-        }
-        return (
-            <div className={"tea-selection"}>
-                <ul className={classNames.join(" ")}>
-                    <li className={"close-dropdown"} onClick={this.handleSelectionClose}>
-                        <img src={closeImg} alt={"Close"} />
-                    </li>
-                    {this.state.teas?.map((tea: Tea) => {
-                        return <li key={tea.id}
-                                   onClick={() => this.handleSelectionChanged(tea)}
-                                   className={this.state.selected?.id === tea.id ? "selected" : ""}>
-                            {tea.name}
-                        </li>;
-                    })}
-                </ul>
-                <div className={"mock-select"} onClick={this.handleSelectionOpen}>
-                    {this.state.selected ? this.state.selected.name : this.state.placeholder}
-                </div>
+    return (
+        <div className={"tea-selection"}>
+            <ul className={classNames.join(" ")}>
+                <li className={"close-dropdown"} onClick={() => setDropdownVisible(false)}>
+                    <img src={closeImg} alt={"Close"} />
+                </li>
+                {props.teas?.map((tea: Tea) => {
+                    return <li key={tea.id}
+                               onClick={() => handleSelectionChanged(tea)}
+                               className={selected?.id === tea.id ? "selected" : ""}>
+                        {tea.name}
+                    </li>;
+                })}
+            </ul>
+            <div className={"mock-select"} onClick={() => setDropdownVisible(props.teas !== undefined && props.teas.length > 0)}>
+                {selected ? selected.name : props.placeholder}
             </div>
-        )
-    }
+        </div>
+    )
 }
