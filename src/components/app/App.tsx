@@ -5,7 +5,7 @@ import TeaMasterlist from "../tea-masterlist/TeaMasterlist";
 import {AboutUs} from "../about-us/AboutUs";
 import {TeaSpotlight} from "../tea-spotlight/TeaSpotlight";
 import {NewMatch} from "../new-match/NewMatch";
-import Nav from "../nav/Nav";
+import {Nav} from "../nav/Nav";
 import {Toast} from "../toast/Toast";
 import {Auth} from "../auth/Auth";
 
