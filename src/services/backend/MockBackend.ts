@@ -277,6 +277,9 @@ export const mockBackend: Backend = {
     founderFavoriteTeas: async (): Promise<Tea[]> => {
         return mockTeas.slice(7, 10);
     },
+    suggestOpponent: async(teaId: string, rank: number): Promise<Tea> => {
+        return Promise.reject(Error("Unimplemented"));
+    },
 
     /* Notes */
     createNote: async (notes: string, teaId: string): Promise<Note> => {

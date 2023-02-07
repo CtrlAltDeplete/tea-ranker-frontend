@@ -37,5 +37,6 @@
 .tea-name > a:hover {
     text-decoration: underline;
     text-decoration-color: #0094FF;
-    text-underline-offset: 0.02em;
+    text-underline-offset: 0.1em;
+    text-decoration-thickness: 3px;
 }

@@ -13,6 +13,7 @@ export const TeaSpotlight: FunctionComponent<ToastableProps> = (props: Toastable
     const [isLoaded, setLoaded] = useState(false);
     const [isSignedIn, setSignedIn] = useState(backend.signedIn());
     const [tea, setTea] = useState<undefined | Tea>(undefined);
+    const [suggestedMatch, setSuggestedMatch] = useState<undefined | Tea>(undefined);
     const teaId = useParams().id;
 
     useEffect(() => {
@@ -20,8 +21,21 @@ export const TeaSpotlight: FunctionComponent<ToastableProps> = (props: Toastable
             return;
         }
 
-        backend.viewTea(teaId, true, true, true, true).then((tea) => {
+        backend.viewTea(teaId, true, true, true, true).then((tea: Tea) => {
             setTea(tea);
+
+            if (isSignedIn) {
+                const rank = tea?.expand?.localRank?.rank ? tea?.expand?.localRank?.rank : tea?.expand?.globalRank?.rank;
+                if (rank === undefined) {
+                    return;
+                }
+
+                backend.suggestOpponent(teaId, rank).then((opponent: Tea) => {
+                    setSuggestedMatch(opponent);
+                }).catch((err) => {
+                    props.toastError(err);
+                });
+            }
         }).catch((err) => {
             props.toastError(err);
         }).finally(() => {
@@ -33,16 +47,8 @@ export const TeaSpotlight: FunctionComponent<ToastableProps> = (props: Toastable
             if (teaId === undefined) {
                 return;
             }
-
-            backend.viewTea(teaId, true, true, true, true).then((tea) => {
-                setTea(tea);
-            }).catch((err) => {
-                props.toastError(err);
-            }).finally(() => {
-                setLoaded(true);
-            });
         });
-    }, [props, teaId]);
+    }, [props, teaId, isSignedIn]);
 
     if (isLoaded) {
         const tags: string[] | undefined = tea?.expand?.tags === undefined ? undefined : tea.expand.tags.map((tag) => tag.name);
@@ -63,6 +69,9 @@ export const TeaSpotlight: FunctionComponent<ToastableProps> = (props: Toastable
                             <div className={"tea-rank"}>
                                 Personal Rank: {tea?.expand?.localRank === undefined ?
                                 'No Personal Rank' : tea.expand.localRank.rank}
+                            </div>
+                            <div className={"suggested-match"}>
+                                Suggested Match: <a href={`/tea/${suggestedMatch?.id}`}>{suggestedMatch?.name}</a>
                             </div>
                             <TeaNotes note={tea?.expand?.notes}
                                       teaId={tea?.id ? tea.id : ""}

@@ -35,11 +35,23 @@
     padding-top: min(21px, 2vh);
 }
 
-.tea-details .tea-rank, .tea-details .match-history {
+.tea-details .suggested-match, .tea-details .tea-rank, .tea-details .match-history {
     font-weight: 700;
     font-size: min(25px, 2.5vh);
     line-height: 120%;
     padding-top: min(21px, 1.5vh);
+}
+
+.tea-details a:link, .tea-details a:visited {
+    color: #282828;
+    text-decoration: none;
+}
+
+.tea-details a:hover {
+    text-decoration: underline;
+    text-decoration-color: #0094FF;
+    text-underline-offset: 0.1em;
+    text-decoration-thickness: 3px;
 }
 
 .tea-spotlight > .tea-img {

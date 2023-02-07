@@ -18,6 +18,7 @@ export interface Backend {
     listTeas(tags?: boolean, globalRank?: boolean, localRank?: boolean, notes?: boolean): Promise<Tea[]>;
     viewTea(id: string, tags?: boolean, globalRank?: boolean, localRank?: boolean, notes?: boolean): Promise<Tea>;
     founderFavoriteTeas(): Promise<Tea[]>;
+    suggestOpponent(teaId: string, rank: number): Promise<Tea>;
 
     /* Notes */
     createNote(notes: string, teaId: string): Promise<Note>;

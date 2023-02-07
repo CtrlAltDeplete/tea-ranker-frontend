@@ -282,6 +282,29 @@ export function PocketBaseBackend(baseUrl: string, redirectUrl: string): Backend
         founderFavoriteTeas: async (): Promise<Tea[]> => {
             return pb.send('/api/founder_favorites', {});
         },
+        suggestOpponent: async(teaId: string, rank: number): Promise<Tea> => {
+            const expand = Array<string>();
+            expand.push('tea');
+
+            const queryParams = {
+                expand: expand.join(','),
+                filter: `tea != "${teaId}"`
+            };
+
+            return pb.collection('local_ranks').getFullList(200, queryParams).then((records: Record[]) => {
+                const localRanks = records.map((record: Record) => localRankFromRecord(record));
+                localRanks.sort((a: LocalRank, b: LocalRank) => {
+                    return Math.abs(a.rank - rank) - Math.abs(b.rank - rank);
+                });
+
+                const topPick = localRanks[0];
+                if (topPick.expand?.tea === undefined) {
+                    throw Error("Could not get tea of closest rank.");
+                }
+
+                return topPick.expand.tea;
+            });
+        },
 
         /* Notes */
         createNote: async (notes: string, teaId: string): Promise<Note> => {
