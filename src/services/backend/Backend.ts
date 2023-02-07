@@ -26,6 +26,7 @@ export interface Backend {
     /* Matches */
     createMatch(loserId: string, winnerId: string): Promise<Match>;
     listMatches(winner?: boolean, loser?: boolean, user?: boolean): Promise<Match[]>;
+    listMatchesForTea(teaId: string, winner?: boolean, loser?: boolean, user?: boolean): Promise<Match[]>;
 
     /* Rankings */
     listGlobalRanks(tea?: boolean): Promise<GlobalRank[]>;

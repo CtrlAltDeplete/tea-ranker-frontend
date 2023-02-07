@@ -1,4 +1,4 @@
-import PocketBase, {AuthProviderInfo, Record, RecordAuthResponse} from 'pocketbase';
+import PocketBase, {AuthProviderInfo, ListResult, Record, RecordAuthResponse} from 'pocketbase';
 
 import {Backend} from "./Backend";
 import {Tea} from "../types/Tea";
@@ -340,6 +340,31 @@ export function PocketBaseBackend(baseUrl: string, redirectUrl: string): Backend
                     return matchFromRecord(matchRecord);
                 });
             });
+        },
+        listMatchesForTea: async (teaId: string, winner?: boolean, loser?: boolean, user?: boolean) => {
+            const expand = Array<string>();
+            if (winner) {
+                expand.push('winner');
+            }
+            if (loser) {
+                expand.push('loser');
+            }
+            if (user) {
+                expand.push('user');
+            }
+
+            const queryParams = {
+                sort: '-created,id',
+                expand: expand.length === 0 ? undefined : expand.join(','),
+                filter: `winner = "${teaId}" || loser = "${teaId}"`
+            };
+
+            return pb.collection('matches').getList(1, 50, queryParams)
+                .then((matches: ListResult<Record>) => {
+                    return matches.items.map((matchRecord: Record) => {
+                        return matchFromRecord(matchRecord);
+                    });
+                });
         },
 
         /* Rankings */

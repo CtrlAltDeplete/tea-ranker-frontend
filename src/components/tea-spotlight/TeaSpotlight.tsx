@@ -67,7 +67,7 @@ export const TeaSpotlight: FunctionComponent<ToastableProps> = (props: Toastable
                             <TeaNotes note={tea?.expand?.notes}
                                       teaId={tea?.id ? tea.id : ""}
                                       toastableProps={props}/>
-                            {/*<div className={"match-history"}>Match History:</div>*/}
+                            {/*<TeaMatches toastableProps={props} teaId={tea?.id ? tea.id : ""} />*/}
                         </div>
                     }
                 </div>

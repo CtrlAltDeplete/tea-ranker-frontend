@@ -309,6 +309,9 @@ export const mockBackend: Backend = {
     listMatches:(winner?: boolean, loser?: boolean, user?: boolean): Promise<Match[]> => {
         return Promise.reject(Error("Unimplemented"));
     },
+    listMatchesForTea:(teaId: string, winner?: boolean, loser?: boolean, user?: boolean): Promise<Match[]> => {
+        return Promise.reject(Error("Unimplemented"));
+    },
 
     /* Rankings */
     listGlobalRanks: async (tea?: boolean): Promise<GlobalRank[]> => {
