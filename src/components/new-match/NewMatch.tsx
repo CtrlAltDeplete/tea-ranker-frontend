@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {FunctionComponent, useEffect, useState} from "react";
 
 import {backend} from "../../config";
 import {Tea} from "../../services/types/Tea";
@@ -7,96 +7,70 @@ import {ToastableProps} from "../toast/ToastableProps";
 
 import "./NewMatch.css";
 
-type NewMatchState = {
-    isLoaded: boolean
-    teas?: Tea[]
-    winner?: Tea
-    loser?: Tea
-}
+export const NewMatch: FunctionComponent<ToastableProps> = (props: ToastableProps): JSX.Element => {
+    const [isLoaded, setLoaded] = useState(false);
+    const [teas, setTeas] = useState<undefined | Tea[]>(undefined);
+    const [winner, setWinner] = useState<undefined | Tea>(undefined);
+    const [loser, setLoser] = useState<undefined | Tea>(undefined);
 
-export class NewMatch extends Component<ToastableProps, NewMatchState> {
-    state: Readonly<NewMatchState> = {
-        isLoaded: false,
-        teas: undefined,
-        winner: undefined,
-        loser: undefined
-    };
-
-    componentDidMount() {
+    useEffect(() => {
         backend.listTeas(false, false, false, false).then((teas: Tea[]) => {
-            this.setState({
-                isLoaded: true,
-                teas: teas
-            });
+            setTeas(teas);
         }).catch((err) => {
-            this.setState({
-                isLoaded: true
-            });
-
-            this.props.toastError(err);
+            props.toastError(err);
+        }).finally(() => {
+            setLoaded(true);
         });
-    }
+    }, [props]);
 
-    handleWinnerChange = (tea?: Tea) => {
-        this.setState({
-            winner: tea
-        });
-    }
-
-    handleLoserChange = (tea?: Tea) => {
-        this.setState({
-            loser: tea
-        });
-    }
-
-    handleSubmit = () => {
-        const loserId = this.state.loser?.id;
-        const winnerId = this.state.winner?.id;
+    function handleSubmit() {
+        const loserId = loser?.id;
+        const winnerId = winner?.id;
 
         if (loserId === undefined || winnerId === undefined) {
-            this.props.toastError(Error("Must choose two teas for winner and loser."));
+            props.toastError(Error("Must choose two teas for winner and loser."));
             return;
         }
 
         if (loserId === winnerId) {
-            this.props.toastError(Error("Must choose different teas for winner and loser."));
+            props.toastError(Error("Must choose different teas for winner and loser."));
             return;
         }
 
         backend.createMatch(loserId, winnerId).then(() => {
-            this.props.toastMessage("Submitted match!");
+            props.toastMessage("Submitted match!");
         }).catch((err) => {
-            this.props.toastError(err);
+            props.toastError(err);
         });
     }
 
-    render() {
-        if (!this.state.isLoaded) {
-            return <h1>Loading...</h1>
-        }
-
-        const canSubmit = this.state.winner !== undefined &&
-            this.state.loser !== undefined &&
-            this.state.winner !== this.state.loser;
-
-        return (
-            <div id={"new-match"}>
-                <h1>New Match</h1>
-                <div className={"tea-selection-section"}>
-                    <TeaSelection teas={this.state.teas}
-                                  selected={this.state.winner}
-                                  placeholder={"Select Winner..."}
-                                  selectionChangeCallback={this.handleWinnerChange}/>
-                    <div id={"vs"}>vs.</div>
-                    <TeaSelection teas={this.state.teas}
-                                  selected={this.state.loser}
-                                  placeholder={"Select Loser..."}
-                                  selectionChangeCallback={this.handleLoserChange}/>
-                </div>
-                <div className={canSubmit ? "submit-link" : "submit-link disabled"} onClick={canSubmit ? this.handleSubmit : () => {}}>
-                    Submit
-                </div>
-            </div>
-        );
+    if (!isLoaded) {
+        return <h1>Loading...</h1>
     }
+
+    const canSubmit = winner !== undefined &&
+        loser !== undefined &&
+        winner !== loser;
+
+    return (
+        <div id={"new-match"}>
+            <h1>New Match</h1>
+            <div className={"tea-selection-section"}>
+                <TeaSelection teas={teas}
+                              selected={winner}
+                              placeholder={"Select Winner..."}
+                              selectionChangeCallback={setWinner}/>
+                <div id={"vs"}>vs.</div>
+                <TeaSelection teas={teas}
+                              selected={loser}
+                              placeholder={"Select Loser..."}
+                              selectionChangeCallback={setLoser}/>
+            </div>
+            <div className={canSubmit ? "submit-link" : "submit-link disabled"}
+                 onClick={canSubmit ? handleSubmit : () => {
+                 }}>
+                Submit
+            </div>
+        </div>
+    );
 }
